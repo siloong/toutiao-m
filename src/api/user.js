@@ -13,4 +13,15 @@ export const login = data => {
     url: '/app/v1_0/authorizations',
     data
   });
-}
+};
+
+
+/* 
+  验证码请求
+*/
+export const sendSms = mobile => {
+  return request({
+    method: 'GET',
+    url: `/app/v1_0/sms/codes/${mobile}`
+  });
+};

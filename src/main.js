@@ -8,8 +8,8 @@ import Vant from 'vant'; //vant component
 import 'amfe-flexible'; //flex setting html font-size
 
 // css
-import '@/styles/index.less';  //global style
 import 'vant/lib/index.css';  //vant component style
+import '@/styles/index.less';  //global style
 
 // use
 Vue.use(Vant);  //use vant component
