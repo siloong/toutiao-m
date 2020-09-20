@@ -23,6 +23,7 @@
         icon-prefix="iconfont"
         left-icon="shouji"
         center
+        clearable
         placeholder="请输入手机号"
         name="mobile"
         :rules="formRules.mobile"
@@ -38,6 +39,7 @@
         name="code"
         :rules="formRules.code"
       >
+        <!-- SendSms and Interval -->
         <template #button>
           <van-count-down 
           v-if="isCountDown"
@@ -110,8 +112,9 @@ export default {
       });
 
       try {
-        const res = await login(this.user);
-        console.log(res);
+        const {data} = await login(this.user);
+        // The user login state in Vuex's user Object
+        this.$store.commit('setUser', data.data);
         // Toast success
         Toast.success("登录成功");
       } catch (error) {
