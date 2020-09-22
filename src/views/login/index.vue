@@ -117,6 +117,7 @@ export default {
         this.$store.commit('setUser', data.data);
         // Toast success
         Toast.success("登录成功");
+        this.$router.back();
       } catch (error) {
         // Toast fail
         Toast.fail("登录失败");
