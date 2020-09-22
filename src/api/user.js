@@ -1,7 +1,7 @@
 /* 
   用户相关请求模块
 */
-
+import store from '@/store/';
 import request from '@/utils/request';
 
 /* 
@@ -23,5 +23,20 @@ export const sendSms = mobile => {
   return request({
     method: 'GET',
     url: `/app/v1_0/sms/codes/${mobile}`
+  });
+};
+
+
+
+/* 
+  获取当前登录用户信息
+*/
+export const getCurrentUser = () => {
+  return request({
+    method: 'GET',
+    url: '/app/v1_0/user',
+    headers: {
+      Authorization: `Bearer ${store.state.user.token}`
+    }
   });
 };

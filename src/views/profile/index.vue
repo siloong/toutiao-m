@@ -9,8 +9,6 @@
           <van-cell 
           class="base-info"
           :border="false"
-          title="单元格" 
-          value="内容"
           center
           >
             <van-image 
@@ -18,9 +16,9 @@
               slot="icon"
               fit="cover"
               round
-              src="https://img.yzcdn.cn/vant/cat.jpeg" 
+              :src="currentUser.photo" 
             />
-            <div slot="title" class="name">MUZE</div>
+            <div slot="title" class="name">{{currentUser.name}}</div>
             <van-button
               class="updata-btn"
               size="small"
@@ -33,25 +31,25 @@
           <van-grid class="status-info" :border="false">
             <van-grid-item>
               <div slot="text" class="info-item">
-                <div class="count">1109</div>
+                <div class="count">{{currentUser.art_count}}</div>
                 <div class="text">头条</div>
               </div>
             </van-grid-item>
             <van-grid-item>
               <div slot="text" class="info-item">
-                <div class="count">1109</div>
+                <div class="count">{{currentUser.follow_count}}</div>
                 <div class="text">关注</div>
               </div>
             </van-grid-item>
             <van-grid-item>
               <div slot="text" class="info-item">
-                <div class="count">1109</div>
+                <div class="count">{{currentUser.fans_count}}</div>
                 <div class="text">粉丝</div>
               </div>
             </van-grid-item>
             <van-grid-item>
               <div slot="text" class="info-item">
-                <div class="count">1109</div>
+                <div class="count">{{currentUser.like_count}}</div>
                 <div class="text">获赞</div>
               </div>
             </van-grid-item>
@@ -100,17 +98,26 @@
 
 <script>
   import { mapState } from 'vuex'
+  import { getCurrentUser } from '@/api/user'
 
   export default {
     name: 'Profile',
     data() {
       return {
+        currentUser: {}
       }
     },
     computed: {
       ...mapState(['user'])
     },
+    created() {
+      this.loadCurrentUser()
+    },
     methods: {
+      async loadCurrentUser() {
+        const {data} = await getCurrentUser();
+        this.currentUser = data.data;
+      },
       onOutLogin() {
         this.$dialog.confirm({
           title: '退出登录',
