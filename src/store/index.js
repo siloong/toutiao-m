@@ -9,7 +9,7 @@ const USER_KEY = 'toutiao-user'
 
 export default new Vuex.Store({
   state: {
-    user: getItem(USER_KEY)  // user the login's status
+    user: getItem(USER_KEY) // user the login's status
   },
   mutations: {
     setUser(state, data) {
