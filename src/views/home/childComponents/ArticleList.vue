@@ -1,17 +1,32 @@
 <template>
   <div class="article-list">
-    <van-list
-      v-model="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      @load="onLoad"
+    <van-pull-refresh 
+      v-model="isRefreshLoading" 
+      @refresh="onRefresh"
+      :success-text="refreshSuccessText"
+      success-duration="1500"
     >
-      <van-cell v-for="item in list" :key="item" :title="item" />
-    </van-list>
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
+        <article-item 
+          v-for="(item, index) in articles"
+          :key="index"
+          :article="item"
+        />
+      </van-list>
+    </van-pull-refresh>
+
   </div>
 </template>
 
 <script>
+import { getArticles } from '@/api/article';
+import ArticleItem from '@/components/article-item/ArticleItem'
+
 export default {
   name: 'ArticleList',
   props: {
@@ -21,32 +36,54 @@ export default {
   },
   data() {
     return {
-      list: [],
+      articles: [],
       loading: false,
       finished: false,
+      timestamp: null,
+      isRefreshLoading: false,
+      refreshSuccessText: ''
     };
   },
   components: {
-    // ArticleItem
+    ArticleItem
   },
   methods: {
-    onLoad() {
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
+    // load more data method
+    async onLoad() {
+      // send request
+      const { data } = await getArticles({
+        channel_id: this.channel.id,
+        timestamp: this.timestamp || Date.now(),
+        with_top: 1
+      });
+      // insert data to articles view
+      const { results } = data.data;
+      this.articles.push(...results);
+      // close loading
+      this.loading = false;
 
-        // 加载状态结束
-        this.loading = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
-        }
-      }, 1000);
+      if(results.length) {
+        this.timestamp = data.data.pre_timestamp
+      } else {
+        this.finished = true;
+      }
     },
+
+    // refresh handle method
+    async onRefresh() {
+      // send request
+      const { data } = await getArticles({
+        channel_id: this.channel.id,
+        timestamp: Date.now(),
+        with_top: 1
+      });
+
+      const { results } = data.data;
+      this.articles.push(...results);
+      // close loading animation
+      this.isRefreshLoading = false;
+      this.refreshSuccessText = `更新了${results.length}条数据`;
+    }
   }
 }
 </script>
